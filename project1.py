@@ -87,8 +87,12 @@ def perceptron_single_step_update(
     real valued number with the value of theta_0 after the current updated has
     completed.
     """
-    # Your code here
-    raise NotImplementedError
+    theta = current_theta
+    theta_0 = current_theta_0
+    if hinge_loss_single(feature_vector, label, current_theta, current_theta_0) > 0:
+        theta += feature_vector*label
+        theta_0 += label 
+    return (theta, theta_0)
 
 
 def perceptron(feature_matrix, labels, T):
@@ -116,12 +120,12 @@ def perceptron(feature_matrix, labels, T):
     theta_0, the offset classification parameter, after T iterations through
     the feature matrix.
     """
-    # Your code here
+    theta = np.zeros_like(feature_matrix[0])
+    theta_0 = 0
     for t in range(T):
         for i in get_order(feature_matrix.shape[0]):
-            # Your code here
-            pass
-    raise NotImplementedError
+            theta, theta_0 = perceptron_single_step_update(feature_matrix[i],labels[i],theta,theta_0)
+    return(theta, theta_0)
 
 
 def average_perceptron(feature_matrix, labels, T):
