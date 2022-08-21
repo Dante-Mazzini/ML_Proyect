@@ -33,7 +33,6 @@ def hinge_loss_single(feature_vector, label, theta, theta_0):
     Returns: A real number representing the hinge loss associated with the
     given data point and parameters.
     """
-    loss = 0
     # Calculation of z
     z = (theta@feature_vector + theta_0)
     # Logic calculation of loss with z
@@ -58,8 +57,12 @@ def hinge_loss_full(feature_matrix, labels, theta, theta_0):
     given dataset and parameters. This number should be the average hinge
     loss across all of the points in the feature matrix.
     """
-    # Your code here
-    raise NotImplementedError
+    loss = 0
+    rows, cols = feature_matrix.size
+    zs = feature_matrix @ theta + theta_0 #zs represents a vector with all the individual results of the distance calculation plus offset from the lineal classifier
+    loss = np.maximum(1 - zs * labels, np.zeros(len(labels))) # we create a zeros vector to compare and apply the loss function to this result
+    return np.mean(loss) # the mean calculation is equivalent to multiply the sum of this losses with 1/n
+
 
 
 def perceptron_single_step_update(
