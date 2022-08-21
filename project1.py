@@ -157,17 +157,18 @@ def average_perceptron(feature_matrix, labels, T):
     Hint: It is difficult to keep a running average; however, it is simple to
     find a sum and divide.
     """
+    
+    rows, cols = feature_matrix.shape
     theta = np.zeros_like(feature_matrix[0])
-    theta_0 = 0
+    theta_0 = 0.0
     sum_theta = theta
     sum_theta_0 = theta_0
     for t in range(T):
-        for i in get_order(feature_matrix.shape[0]):
+        for i in get_order(rows):
             theta, theta_0 = perceptron_single_step_update(feature_matrix[i],labels[i],theta,theta_0)
             sum_theta += theta
             sum_theta_0 += theta_0
-    return(sum_theta/(T*feature_matrix.shape[0]), sum_theta_0/(T*feature_matrix.shape[0]))
-
+    return(sum_theta/(T*rows), sum_theta_0/(T*rows))
 
 def pegasos_single_step_update(
         feature_vector,
