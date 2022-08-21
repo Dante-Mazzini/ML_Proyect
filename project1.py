@@ -58,7 +58,7 @@ def hinge_loss_full(feature_matrix, labels, theta, theta_0):
     loss across all of the points in the feature matrix.
     """
     loss = 0
-    rows, cols = feature_matrix.size
+    rows, cols = feature_matrix.shape
     zs = feature_matrix @ theta + theta_0 #zs represents a vector with all the individual results of the distance calculation plus offset from the lineal classifier
     loss = np.maximum(1 - zs * labels, np.zeros(len(labels))) # we create a zeros vector to compare and apply the loss function to this result
     return np.mean(loss) # the mean calculation is equivalent to multiply the sum of this losses with 1/n
@@ -157,8 +157,16 @@ def average_perceptron(feature_matrix, labels, T):
     Hint: It is difficult to keep a running average; however, it is simple to
     find a sum and divide.
     """
-    # Your code here
-    raise NotImplementedError
+    theta = np.zeros_like(feature_matrix[0])
+    theta_0 = 0
+    sum_theta = theta
+    sum_theta_0 = theta_0
+    for t in range(T):
+        for i in get_order(feature_matrix.shape[0]):
+            theta, theta_0 = perceptron_single_step_update(feature_matrix[i],labels[i],theta,theta_0)
+            sum_theta += theta
+            sum_theta_0 += theta_0
+    return(sum_theta/(T*feature_matrix.shape[0]), sum_theta_0/(T*feature_matrix.shape[0]))
 
 
 def pegasos_single_step_update(
