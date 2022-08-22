@@ -1,4 +1,5 @@
 from string import punctuation, digits
+from tkinter import Label
 import numpy as np
 import random
 
@@ -159,16 +160,17 @@ def average_perceptron(feature_matrix, labels, T):
     """
     
     rows, cols = feature_matrix.shape
-    theta = np.zeros_like(feature_matrix[0])
+    theta = np.zeros(cols)
     theta_0 = 0.0
-    sum_theta = theta
+    sum_theta = np.zeros(cols) # if you define sum_theta as theta, it will give you an error. Thats why I used the command zeros twice
     sum_theta_0 = theta_0
     for t in range(T):
         for i in get_order(rows):
             theta, theta_0 = perceptron_single_step_update(feature_matrix[i],labels[i],theta,theta_0)
             sum_theta += theta
             sum_theta_0 += theta_0
-    return(sum_theta/(T*rows), sum_theta_0/(T*rows))
+    return(sum_theta / (T*rows), sum_theta_0 / (T*rows))
+    
 
 def pegasos_single_step_update(
         feature_vector,
@@ -196,8 +198,13 @@ def pegasos_single_step_update(
     real valued number with the value of theta_0 after the current updated has
     completed.
     """
-    # Your code here
-    raise NotImplementedError
+    step = 1 - eta*L
+    if label * ((current_theta @ feature_vector) + current_theta_0) <= 1:
+        current_theta = step*current_theta + eta*label*feature_vector
+        current_theta_0 = current_theta_0 + eta*label
+    else:
+        current_theta = step*current_theta
+    return(current_theta, current_theta_0)
 
 
 def pegasos(feature_matrix, labels, T, L):
@@ -229,8 +236,19 @@ def pegasos(feature_matrix, labels, T, L):
     number with the value of the theta_0, the offset classification
     parameter, found after T iterations through the feature matrix.
     """
-    # Your code here
-    raise NotImplementedError
+    eta = 1
+    counter = 1
+    rows, cols = feature_matrix.shape
+    current_theta = np.zeros(cols)
+    current_theta_0 = 0.0
+    for t in range(T):
+        for i in get_order(rows):
+            (current_theta, current_theta_0) = pegasos_single_step_update(
+                feature_matrix[i],labels[i],L,eta,current_theta,current_theta_0)
+            counter += 1
+            eta = i/np.sqrt(counter)
+    return(current_theta, current_theta_0)
+            
 
 # Part II
 
