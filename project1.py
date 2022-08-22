@@ -286,7 +286,6 @@ def classify(feature_matrix, theta, theta_0):
     Args:
         feature_matrix - A numpy matrix describing the given data. Each row
             represents a single data point.
-                theta - A numpy array describing the linear classifier.
         theta - A numpy array describing the linear classifier.
         theta_0 - A real valued number representing the offset parameter.
 
@@ -295,8 +294,15 @@ def classify(feature_matrix, theta, theta_0):
     given theta and theta_0. If a prediction is GREATER THAN zero, it should
     be considered a positive classification.
     """
-    # Your code here
-    raise NotImplementedError
+    rows, cols = feature_matrix.shape
+    ort_distances = np.zeros(rows)
+    for i in range(rows):
+        ort_distance = (theta@feature_matrix[i])+theta_0
+        if ort_distance > 1e-7:
+            ort_distances[i]=+1
+        else:
+            ort_distances[i]=-1
+    return(ort_distances)
 
 
 def classifier_accuracy(
