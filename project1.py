@@ -295,14 +295,14 @@ def classify(feature_matrix, theta, theta_0):
     be considered a positive classification.
     """
     rows, cols = feature_matrix.shape
-    ort_distances = np.zeros(rows)
+    prop_labels = np.zeros(rows)
     for i in range(rows):
         ort_distance = (theta@feature_matrix[i])+theta_0
         if ort_distance > 1e-7:
-            ort_distances[i]=+1
+            prop_labels[i]=+1
         else:
-            ort_distances[i]=-1
-    return(ort_distances)
+            prop_labels[i]=-1
+    return(prop_labels)
 
 
 def classifier_accuracy(
@@ -337,8 +337,26 @@ def classifier_accuracy(
     trained classifier on the training data and the second element is the
     accuracy of the trained classifier on the validation data.
     """
-    # Your code here
-    raise NotImplementedError
+    (theta_train, theta_train_0) = classifier(train_feature_matrix, train_labels, **kwargs)
+
+    # classify the validation set
+    prop_labels_val = classify(val_feature_matrix, theta_train, theta_train_0)
+    count = 0
+    lenght_vector_val = len(prop_labels_val)
+    for i in range(lenght_vector_val):
+        if prop_labels_val[i] == val_labels[i]:
+            count += 1
+    accuracy_val = count/lenght_vector_val
+
+    # classify the training set
+    prop_labels_train = classify(val_feature_matrix, theta_train, theta_train_0)
+    count = 0
+    lenght_vector_train = len(prop_labels_train)
+    for i in range(lenght_vector_val):
+        if prop_labels_train[i] == train_labels[i]:
+            count += 1
+    accuracy_train = count/lenght_vector_train
+    return(accuracy_train, accuracy_val)
 
 
 def extract_words(input_string):
